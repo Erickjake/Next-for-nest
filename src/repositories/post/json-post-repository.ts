@@ -11,8 +11,12 @@ const JSON_POSTS_FILE_PATH = resolve(
   'seed',
   'posts.json',
 );
-
+const SIMULATED_DELAY_MS = 0;
 export class JsonPostRepository implements PostRepository {
+  private async simulateDelay() {
+    if (SIMULATED_DELAY_MS <= 0) return;
+    return new Promise(resolve => setTimeout(resolve, SIMULATED_DELAY_MS));
+  }
   // Adicionei o tipo de retorno explicitamente
   private async readFromDisk(): Promise<PostModel[]> {
     try {
@@ -29,6 +33,7 @@ export class JsonPostRepository implements PostRepository {
   }
 
   async findAll(): Promise<PostModel[]> {
+    await this.simulateDelay();
     // Agora o findAll recebe e repassa os dados do disco
     const posts = await this.readFromDisk();
     return posts;
