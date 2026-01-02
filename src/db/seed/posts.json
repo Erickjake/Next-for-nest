@@ -6,7 +6,7 @@
       "excerpt": "O Next.js também é uma boa escolha para quem quer se preocupar com performance e SEO.",
       "content": "O Next.js também é uma boa escolha para quem quer se preocupar com performance e SEO.",
       "coverImageUrl": "/images/bryen_8.png",
-      "published": true,
+      "published": false,
       "createdAt": "2025-04-08T00:24:38.616Z",
       "updatedAt": "2025-04-08T00:33:56.907Z",
       "author": "Isabela Nunes"
@@ -18,7 +18,7 @@
       "excerpt": "Em vez de configurar tudo manualmente, basta criar um arquivo com o nome certo e o Next.js entende que aquilo representa uma página.",
       "content": "Em vez de configurar tudo manualmente, basta criar um arquivo com o nome certo e o Next.js entende que aquilo representa uma página.",
       "coverImageUrl": "/images/bryen_6.png",
-      "published": true,
+      "published": false,
       "createdAt": "2025-04-07T00:24:38.616Z",
       "updatedAt": "2025-04-07T00:33:56.907Z",
       "author": "Marina Duarte"
@@ -30,7 +30,7 @@
       "excerpt": "Muitas empresas e desenvolvedores individuais escolhem o Next.js justamente porque ele consegue unir simplicidade com recursos avançados.",
       "content": "Muitas empresas e desenvolvedores individuais escolhem o Next.js justamente porque ele consegue unir simplicidade com recursos avançados.",
       "coverImageUrl": "/images/bryen_9.png",
-      "published": true,
+      "published": false,
       "createdAt": "2025-04-06T00:24:38.616Z",
       "updatedAt": "2025-04-06T00:33:56.907Z",
       "author": "Pedro Martins"
