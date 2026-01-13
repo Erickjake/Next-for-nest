@@ -1,11 +1,11 @@
 import PostCoverImage from "../PostCoverImage";
 import { PostSummary } from "../PostSummary";
-import { findAllPublicPosts } from "@/src/lib/post/queries";
+import { findAllPublicPostsCached } from "@/src/lib/post/queries";
 
 export async function PostFeature() {
   // PONTO DE ATENÇÃO: O ideal seria ter uma função findLatestPost()
   // que usa "LIMIT 1" no banco de dados para não trafegar dados desnecessários.
-  const posts = await findAllPublicPosts();
+  const posts = await findAllPublicPostsCached();
   const post = posts[0];
 
   // 1. Guard Clause: Se não houver posts, não renderiza nada (ou renderiza um placeholder)
