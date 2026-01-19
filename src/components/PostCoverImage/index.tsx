@@ -3,8 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 type PostCoverImageProps = {
-  imageProps?: React.ComponentProps<typeof Image>;
-  linkProps?: React.ComponentProps<typeof Link>;
+  imageProps: React.ComponentProps<typeof Image>;
+  linkProps: React.ComponentProps<typeof Link>;
 }
 
 export default function PostCoverImage({ imageProps, linkProps }: PostCoverImageProps) {
