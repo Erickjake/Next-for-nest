@@ -1,6 +1,6 @@
 import PostCoverImage from "../PostCoverImage";
 import { PostSummary } from "../PostSummary";
-import { findAllPublicPostsCached } from "@/src/lib/post/queries";
+import { findAllPublicPostsCached } from "@/src/lib/post/queries/public";
 
 export async function PostFeature() {
   // PONTO DE ATENÇÃO: O ideal seria ter uma função findLatestPost()

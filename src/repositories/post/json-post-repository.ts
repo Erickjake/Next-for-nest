@@ -2,6 +2,7 @@ import { PostModel } from '@/src/models/post/post-model';
 import { PostRepository } from './post-repository';
 import { resolve } from 'path';
 import { promises as fs } from 'fs';
+import { SIMULATED_DELAY_MS } from '@/src/lib/post/constants';
 
 const ROOT_DIR = process.cwd();
 const JSON_POSTS_FILE_PATH = resolve(
@@ -11,7 +12,7 @@ const JSON_POSTS_FILE_PATH = resolve(
   'seed',
   'posts.json',
 );
-const SIMULATED_DELAY_MS = 0;
+
 export class JsonPostRepository implements PostRepository {
   private async simulateDelay() {
     if (SIMULATED_DELAY_MS <= 0) return;

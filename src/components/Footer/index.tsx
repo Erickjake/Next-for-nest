@@ -1,6 +1,9 @@
+import { cacheLife } from "next/cache";
 import Link from "next/link";
 
-export function Footer() {
+export async function Footer() {
+  'use cache';
+  cacheLife('days')
   return (
     <footer className="text-center py-4 border-t mt-8">
       <p className="text-sm text-slate-500">
