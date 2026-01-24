@@ -1,1 +1,1 @@
-export const SIMULATED_DELAY_MS = 1000;
+export const SIMULATED_DELAY_MS = 0;
