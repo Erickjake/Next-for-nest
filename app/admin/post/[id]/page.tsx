@@ -1,12 +1,14 @@
+import AdminPostContent from "@/src/components/admin/AdminPostContent";
+import { Suspense } from "react";
 
-type AdminPostiDPageProps = {
-  params: Promise<{ id: string }>;
+type PageProps = {
+  params: { id: string };
 };
-export default async function AdminPostiDPage({ params }: AdminPostiDPageProps) {
-  const { id } = await params;
+
+export default function AdminPostIdPage({ params }: PageProps) {
   return (
-    <div className="py-16 text-6xl">
-      <h1>Admin Post Page {id}</h1>
-    </div>
+    <Suspense fallback={<div>Carregando post...</div>}>
+      <AdminPostContent id={params.id} />
+    </Suspense>
   );
 }

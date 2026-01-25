@@ -1,4 +1,4 @@
-import PostListAdminPage from "@/src/components/PostListAdmin";
+import PostListAdminPage from "@/src/components/admin/PostListAdmin";
 import SpinLoader from "@/src/components/SpinLoader";
 import { Metadata } from "next";
 import { Suspense } from "react";

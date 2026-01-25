@@ -1,3 +1,4 @@
+import ErrorMessage from "../ErrorMessage";
 import PostCoverImage from "../PostCoverImage";
 import { PostSummary } from "../PostSummary";
 import { findAllPublicPostsCached } from "@/src/lib/post/queries/public";
@@ -6,6 +7,7 @@ export async function PostFeature() {
   // PONTO DE ATENÇÃO: O ideal seria ter uma função findLatestPost()
   // que usa "LIMIT 1" no banco de dados para não trafegar dados desnecessários.
   const posts = await findAllPublicPostsCached();
+  if (posts.length <= 1) return <ErrorMessage contentTitle="OPSSS!😅" content="Desculpe, não há posts em destaque no momento. Por favor, volte mais tarde." />
   const post = posts[0];
 
   // 1. Guard Clause: Se não houver posts, não renderiza nada (ou renderiza um placeholder)

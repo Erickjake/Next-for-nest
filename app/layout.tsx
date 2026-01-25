@@ -3,6 +3,7 @@ import "./globals.css";
 import { Container } from "@/src/components/Container";
 import Header from "@/src/components/Header";
 import Footer from "@/src/components/Footer";
+import { ToastifyContainer } from "@/src/components/ToastifyContainer";
 
 
 
@@ -29,6 +30,7 @@ export default function RootLayout({
           {children}
           <Footer />
         </Container>
+        <ToastifyContainer />
       </body>
     </html>
   );

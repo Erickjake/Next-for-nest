@@ -1,26 +1,32 @@
 'use cache';
-import { PostModel } from '@/src/models/post/post-model'; // Confirme o caminho
+
+import notFound from '@/app/not-found';
+import { PostModel } from '@/src/models/post/post-model';
 import { postRepository } from '@/src/repositories/post';
 import { cacheLife, cacheTag } from 'next/cache';
-import { notFound } from 'next/navigation';
 import { cache } from 'react';
 
-// A tipagem : Promise<PostModel[]> deve ficar DEPOIS dos parênteses do async
 export const findAllPublicPostsCached = cache(
   async (): Promise<PostModel[]> => {
+    // ✅ PRIMEIRO define cache
     cacheLife('seconds');
     cacheTag('posts');
-    // Remova o ": Promise<...>" desta linha abaixo
-    const posts = await postRepository.findAllPublic();
-    return posts;
+
+    // ✅ DEPOIS acessa dados
+    return await postRepository.findAllPublic();
   },
 );
 export const findPublicPostBySlugCached = cache(async (slug: string) => {
+  cacheLife('seconds');
+  cacheTag(`post-${slug}`);
+
   const post = await postRepository
     .findBySlugPublic(slug)
     .catch(() => undefined);
-  cacheLife('seconds');
-  cacheTag(`post-${slug}`);
-  if (!post) return notFound();
+
+  if (!post) {
+    throw notFound(); // 👈 IMPORTANTE
+  }
+
   return post;
 });
