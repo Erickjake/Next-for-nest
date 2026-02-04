@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { ManagePostForm } from "@/src/components/admin/ManagePostForm";
 
+
 type PageProps = {
   params: { id: string };
 };

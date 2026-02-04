@@ -1,11 +1,12 @@
 import { ManagePostForm } from "@/src/components/admin/ManagePostForm";
-import { PublicPostModel } from "@/src/dto/post/dto";
+import { PublicPost } from "@/src/dto/post/dto";
 import { Metadata } from "next";
+
 
 export const metadata: Metadata = {
   title: "Editar Post",
 }
-export default async function AdminPostNewPage({ postPublic }: { postPublic?: PublicPostModel }) {
+export default async function AdminPostNewPage({ postPublic }: { postPublic?: PublicPost }) {
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-xl font-extrabold">New Post</h1>
