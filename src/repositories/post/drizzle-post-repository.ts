@@ -4,8 +4,38 @@ import { drizzleDb } from '@/src/db/drizzle';
 import { logColor } from '@/src/utils/log-color';
 import { asyncDelay } from '@/src/utils/async-delay';
 import { SIMULATED_DELAY_MS } from '@/src/lib/post/constants';
+import { postsTable } from '@/src/db/drizzle/schemas';
+import { eq } from 'drizzle-orm';
 
 export class DrizzlePostRepository implements PostRepository {
+  async delete(id: string): Promise<void> {
+    const post = await drizzleDb.query.posts.findFirst({
+      where: (posts, { eq }) => eq(posts.id, id),
+    });
+    if (!post) {
+      throw new Error(`Post with ID ${id} Não encontrado.`);
+    }
+    await drizzleDb.delete(postsTable).where(eq(postsTable.id, id)).returning();
+  }
+
+  async update(
+    id: string,
+    newPostData: Omit<PostModel, 'id' | 'slug' | 'createdAt' | 'updatedAt'>,
+  ): Promise<PostModel> {
+    const oldPost = await drizzleDb.query.posts.findFirst({
+      where: (posts, { eq }) => eq(posts.id, id),
+    });
+    if (!oldPost) {
+      throw new Error(`Post with ID ${id} Não encontrado.`);
+    }
+    const updatedAt = new Date().toISOString();
+    const updatedPost = await drizzleDb
+      .update(postsTable)
+      .set({ ...newPostData, updatedAt })
+      .where(eq(postsTable.id, id))
+      .returning();
+    return updatedPost[0] as PostModel;
+  }
   async findAllPublic(): Promise<PostModel[]> {
     await asyncDelay(SIMULATED_DELAY_MS, true);
     logColor(
@@ -59,10 +89,16 @@ export class DrizzlePostRepository implements PostRepository {
     }
     return post as PostModel;
   }
+  async create(post: PostModel): Promise<PostModel> {
+    const postExists = await drizzleDb.query.posts.findFirst({
+      where: (posts, { eq, or }) =>
+        or(eq(posts.id, post.id), eq(posts.id, post.id)),
+      columns: { id: true },
+    });
+    if (postExists) {
+      throw new Error(`Post with ID ${post.id} já existe.`);
+    }
+    await drizzleDb.insert(postsTable).values(post);
+    return post;
+  }
 }
-
-// (async () => {
-//   const repo = new DrizzlePostRepository();
-//   const posts = await repo.findAll();
-//   posts.forEach(posts => console.log(posts.slug, posts.published));
-// })();

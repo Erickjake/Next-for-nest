@@ -1,4 +1,6 @@
 import { MenuAdmin } from "@/src/components/admin/MenuAdmin";
+import SpinLoader from "@/src/components/SpinLoader";
+import { Suspense } from "react";
 
 
 type AdminPostLayoutProps = Readonly<{
@@ -11,7 +13,9 @@ export default function AdminPostLayout({ children }: Readonly<{
 }>) {
   return (
     <>
-      <MenuAdmin />{children}
+      <Suspense fallback={<SpinLoader />}>
+        <MenuAdmin />{children}
+      </Suspense>
     </>
   );
 }

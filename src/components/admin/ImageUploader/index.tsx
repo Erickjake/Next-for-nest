@@ -75,7 +75,7 @@ export function ImageUploader() {
           <p>
             <b>URL:</b> {imgUrl}
           </p>
-          <Image src={imgUrl} alt="uploaded" className="w-24 h-24 rounded-md" />
+          <Image src={imgUrl} alt="uploaded" width={96} height={96} className="w-24 h-24 rounded-md" />
         </div>
       )}
       <input ref={fileInputRef} type="file" accept="image/*" id="image-upload" className="hidden" title="Upload an image file" onChange={handleFileChange} />
