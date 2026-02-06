@@ -29,12 +29,25 @@ export class DrizzlePostRepository implements PostRepository {
       throw new Error(`Post with ID ${id} Não encontrado.`);
     }
     const updatedAt = new Date().toISOString();
-    const updatedPost = await drizzleDb
+    const postData = {
+      author: newPostData.author,
+      title: newPostData.title,
+      content: newPostData.content,
+      published: newPostData.published,
+      excerpt: newPostData.excerpt,
+      coverImageUrl: newPostData.coverImageUrl,
+      updatedAt,
+    };
+    await drizzleDb
       .update(postsTable)
-      .set({ ...newPostData, updatedAt })
+      .set(postData)
       .where(eq(postsTable.id, id))
       .returning();
-    return updatedPost[0] as PostModel;
+
+    return {
+      ...oldPost,
+      ...postData,
+    };
   }
   async findAllPublic(): Promise<PostModel[]> {
     await asyncDelay(SIMULATED_DELAY_MS, true);

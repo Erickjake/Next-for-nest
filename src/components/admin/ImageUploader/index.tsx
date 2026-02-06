@@ -8,7 +8,10 @@ import { IMAGE_UPLOAD_ACCEPTED_FILE_TYPES, IMAGE_UPLOAD_MAX_FILE_SIZE } from "@/
 import { toast } from "react-toastify";
 import { uploadImageAction } from "@/src/actions/post/upload-image-action";
 
-export function ImageUploader() {
+type ImageProps = {
+  disabled?: boolean
+}
+export function ImageUploader({ disabled = false }: ImageProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, startTransition] = useTransition()
   const [imgUrl, setImgUrl] = useState('');
@@ -66,7 +69,7 @@ export function ImageUploader() {
 
   return (
     <div className="flex flex-col gap-2 py-4">
-      <Button variant="ghost" size="md" type="button" className="self-start" onClick={handleChooseFile} disabled={isUploading}>
+      <Button variant="ghost" size="md" type="button" className="self-start" onClick={handleChooseFile} disabled={isUploading || disabled}>
         <ImageUpIcon />
         Upload Image
       </Button>
@@ -78,7 +81,7 @@ export function ImageUploader() {
           <Image src={imgUrl} alt="uploaded" width={96} height={96} className="w-24 h-24 rounded-md" />
         </div>
       )}
-      <input ref={fileInputRef} type="file" accept="image/*" id="image-upload" className="hidden" title="Upload an image file" onChange={handleFileChange} />
+      <input disabled={isUploading || disabled} ref={fileInputRef} type="file" accept="image/*" id="image-upload" className="hidden" title="Upload an image file" onChange={handleFileChange} />
     </div>
   )
 }

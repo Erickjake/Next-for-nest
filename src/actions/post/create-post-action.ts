@@ -12,7 +12,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 type createPostActionState = {
   formState: PublicPost;
-  erros: string[];
+  errors: string[];
+  success?: string;
 };
 
 export async function createPostAction(
@@ -23,7 +24,7 @@ export async function createPostAction(
   if (!(formData instanceof FormData)) {
     return {
       formState: prevState.formState,
-      erros: ['FormData inválido'],
+      errors: ['FormData inválido'],
     };
   }
 
@@ -35,7 +36,7 @@ export async function createPostAction(
     const errors = getZodErrorMessage(zodParseObj.error.format());
     return {
       formState: makePartialPublicPost(formDataObject),
-      erros: errors,
+      errors: errors,
     };
   }
 
@@ -56,14 +57,14 @@ export async function createPostAction(
     if (e instanceof Error) {
       return {
         formState: newPost,
-        erros: [e.message],
+        errors: [e.message],
       };
     }
     return {
       formState: newPost,
-      erros: ['Erro desconhecido'],
+      errors: ['Erro desconhecido'],
     };
   }
   updateTag('posts');
-  redirect(`/admin/post/${newPost.id}`);
+  redirect(`/admin/post/${newPost.id}?create=1`);
 }

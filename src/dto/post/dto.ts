@@ -18,6 +18,6 @@ export const makePartialPublicPost = (
   };
 };
 
-export const makePlublicPostFromDb = (post: PostModel): PublicPost => {
+export const makePublicPostFromDb = (post: PostModel): PublicPost => {
   return makePartialPublicPost(post);
 };
