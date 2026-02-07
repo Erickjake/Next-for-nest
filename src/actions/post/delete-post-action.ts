@@ -2,10 +2,10 @@
 
 import { postRepository } from '@/src/repositories/post';
 import { logColor } from '@/src/utils/log-color';
-import { updateTag } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 
 export async function deletePostAction(id: string) {
-  logColor('' + id, 'red');
+  logColor('ID para exclusão:', id);
 
   if (!id || typeof id !== 'string') {
     return {
@@ -13,10 +13,17 @@ export async function deletePostAction(id: string) {
     };
   }
 
-  let post;
-
   try {
-    post = await postRepository.delete(id);
+    // Buscamos o post antes de deletar para obter o slug para revalidação
+    const post = await postRepository.findByID(id);
+    if (!post) {
+      return {
+        error: 'Post não encontrado.',
+      };
+    }
+    await postRepository.delete(id);
+    revalidateTag('posts', post.slug || '');
+    revalidateTag(`post-${post.slug}`, post.slug || '');
   } catch (e: unknown) {
     if (e instanceof Error) {
       return {
@@ -27,8 +34,6 @@ export async function deletePostAction(id: string) {
       error: 'Erro ao excluir o post.',
     };
   }
-  updateTag('posts');
-  updateTag(`post-${post.slug}`);
   return {
     error: '',
   };

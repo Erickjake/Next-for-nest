@@ -1,9 +1,5 @@
 'use server';
 
-import {
-  IMAGE_SERVER_URL,
-  IMAGE_UPLOAD_DIRECTORY,
-} from '@/src/lib/post/constants';
 import { mkdir, writeFile } from 'fs/promises';
 import { extname, resolve } from 'path';
 
@@ -11,6 +7,10 @@ type UploadImageAction = {
   url: string;
   error: string;
 };
+
+const uploadDiretory = process.env.IMAGE_UPLOAD_DIRECTORY;
+const serverUrl = process.env.IMAGE_SERVER_URL;
+
 export async function uploadImageAction(
   formData: FormData,
 ): Promise<UploadImageAction> {
@@ -33,7 +33,11 @@ export async function uploadImageAction(
   const imageExtension = extname(file.name);
   const imageName = `${Date.now()}${imageExtension}`;
 
-  const uploadPath = resolve(process.cwd(), 'public', IMAGE_UPLOAD_DIRECTORY);
+  const uploadPath = resolve(
+    process.cwd(),
+    'public',
+    uploadDiretory || 'uploads',
+  );
   await mkdir(uploadPath, { recursive: true });
 
   const fileArrayBuffer = await file.arrayBuffer();
@@ -42,7 +46,7 @@ export async function uploadImageAction(
   const filePath = resolve(uploadPath, imageName);
   await writeFile(filePath, fileBuffer);
 
-  const url = `${IMAGE_SERVER_URL}/${imageName}`;
+  const url = `${serverUrl}/${imageName}`;
 
   return makeResult({ url });
 }

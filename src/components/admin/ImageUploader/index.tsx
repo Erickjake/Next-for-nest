@@ -4,10 +4,12 @@ import Image from "next/image"
 import { ImageUpIcon } from "lucide-react"
 import { Button } from "../../Button"
 import { useRef, useState, useTransition } from "react"
-import { IMAGE_UPLOAD_ACCEPTED_FILE_TYPES, IMAGE_UPLOAD_MAX_FILE_SIZE } from "@/src/lib/post/constants";
+import { IMAGE_UPLOAD_ACCEPTED_FILE_TYPES } from "@/src/lib/post/constants";
 import { toast } from "react-toastify";
 import { uploadImageAction } from "@/src/actions/post/upload-image-action";
 
+
+const uploadMaxSize = Number(process.env.NEXT_PUBLIC_IMAGE_UPLOAD_MAX_FILE_SIZE || 0);
 type ImageProps = {
   disabled?: boolean
 }
@@ -37,8 +39,8 @@ export function ImageUploader({ disabled = false }: ImageProps) {
         return
       };
     }
-    if (file.size > IMAGE_UPLOAD_MAX_FILE_SIZE) {
-      toast.error(`Por favor, envie um arquivo de imagem menor que ${IMAGE_UPLOAD_MAX_FILE_SIZE / 1024}KB`);
+    if (file.size > uploadMaxSize) {
+      toast.error(`Por favor, envie um arquivo de imagem menor que ${uploadMaxSize / 1024}KB`);
 
       fileInputRef.current.value = '';
       setImgUrl('')
