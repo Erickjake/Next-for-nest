@@ -5,6 +5,7 @@ import {
   makePublicPostFromDb,
   PublicPost,
 } from '@/src/dto/post/dto';
+import { verifyLoginSession } from '@/src/lib/login/manage-login';
 import { PostUpdateSchema } from '@/src/lib/post/validation';
 import { postRepository } from '@/src/repositories/post';
 import { makeRandomString } from '@/src/utils/make-random-string';
@@ -21,6 +22,8 @@ export async function updatePostAction(
   prevState: UpdatePostActionState,
   formData: FormData,
 ): Promise<UpdatePostActionState> {
+  const isAuth = await verifyLoginSession();
+
   // TODO: verificar se o usuário tá logado
 
   if (!(formData instanceof FormData)) {
@@ -41,7 +44,12 @@ export async function updatePostAction(
 
   const formDataToObj = Object.fromEntries(formData.entries());
   const zodParsedObj = PostUpdateSchema.safeParse(formDataToObj);
-
+  if (!isAuth) {
+    return {
+      formState: makePartialPublicPost(formDataToObj),
+      errors: ['Faça login para atualizar um post'],
+    };
+  }
   if (!zodParsedObj.success) {
     const errors = getZodErrorMessages(zodParsedObj.error.format());
     return {

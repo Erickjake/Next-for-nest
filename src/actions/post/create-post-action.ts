@@ -1,6 +1,7 @@
 'use server';
 
 import { makePartialPublicPost, PublicPost } from '@/src/dto/post/dto';
+import { verifyLoginSession } from '@/src/lib/login/manage-login';
 import { PostCreateSchema } from '@/src/lib/post/validation';
 import { PostModel } from '@/src/models/post/post-model';
 import { postRepository } from '@/src/repositories/post';
@@ -20,6 +21,7 @@ export async function createPostAction(
   prevState: createPostActionState,
   formData: FormData,
 ): Promise<createPostActionState> {
+  const isAuth = await verifyLoginSession();
   // 1. Validação de FormData
   if (!(formData instanceof FormData)) {
     return {
@@ -30,6 +32,13 @@ export async function createPostAction(
 
   const formDataObject = Object.fromEntries(formData.entries());
   const zodParseObj = PostCreateSchema.safeParse(formDataObject);
+
+  if (!isAuth) {
+    return {
+      formState: makePartialPublicPost(formDataObject),
+      errors: ['Faça login para criar um post'],
+    };
+  }
 
   // 2. Validação do Schema Zod
   if (!zodParseObj.success) {

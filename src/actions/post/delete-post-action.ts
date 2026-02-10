@@ -1,11 +1,18 @@
 'use server';
 
+import { verifyLoginSession } from '@/src/lib/login/manage-login';
 import { postRepository } from '@/src/repositories/post';
 import { logColor } from '@/src/utils/log-color';
 import { revalidateTag } from 'next/cache';
 
 export async function deletePostAction(id: string) {
   logColor('ID para exclusão:', id);
+  const isAuth = await verifyLoginSession();
+  if (!isAuth) {
+    return {
+      error: 'Faça login para excluir um post.',
+    };
+  }
 
   if (!id || typeof id !== 'string') {
     return {
