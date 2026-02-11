@@ -1,15 +1,17 @@
 'use client'
 
+import { logoutAction } from "@/src/actions/login/logout-action";
 import { cn } from "@/src/lib/utils";
-import { CircleXIcon, FileTextIcon, HouseIcon, MenuIcon, PlusIcon } from "lucide-react";
+import { CircleXIcon, FileTextIcon, HourglassIcon, HouseIcon, LogOutIcon, MenuIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { startTransition } from "react";
+import { useTransition } from "react";
 import { useEffect, useState } from "react";
 
 export function MenuAdmin() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
 
 
 
@@ -28,6 +30,13 @@ export function MenuAdmin() {
     'hover:bg-slate-300', 'transition-colors', 'cursor-pointer', 'h-10 shrink-0', 'hover:pointer');
 
   const openClasses = cn(linkClasses, 'text-slate-900', 'font-semibold', 'sm:hidden');
+  const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    startTransition(async () => {
+      await logoutAction();
+    });
+  };
+
   return <nav className={navClasses}>
     <button className={openClasses} onClick={() => setIsOpen(!isOpen)}>{!isOpen && (
       <>
@@ -45,5 +54,17 @@ export function MenuAdmin() {
     < a className={linkClasses} href="/" target="_blank"><HouseIcon className="inline-block mr-2" />Home</a>
     <Link className={linkClasses} href="/admin/post"><FileTextIcon className="inline-block mr-2" />Posts</Link>
     <Link className={linkClasses} href="/admin/post/new"><PlusIcon className="inline-block mr-2" />Criar Posts</Link>
+    <a onClick={handleLogout} className={linkClasses} href='#'>
+      {isPending && (
+        <>
+          <HourglassIcon />
+        </>
+      )}
+      {!isPending && (
+        <>
+          <LogOutIcon />
+        </>
+      )}
+    </a>
   </nav>;
 }

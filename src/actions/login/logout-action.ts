@@ -1,7 +1,9 @@
 'use server';
 
-import { asyncDelay } from '@/src/utils/async-delay';
+import { deleteLoginSession } from '@/src/lib/login/manage-login';
+import { redirect } from 'next/navigation';
 
 export async function logoutAction() {
-  await asyncDelay(5000);
+  await deleteLoginSession();
+  return redirect('/');
 }
