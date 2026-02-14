@@ -7,7 +7,9 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLoginPage() {
-  const allowLogin = Boolean(Number(process.env.ALLOW_LOGIN));
+  // Verifica se a variável é explicitamente '1' ou 'true'
+  const allowLogin = process.env.ALLOW_LOGIN === '1' || process.env.ALLOW_LOGIN === 'true';
+
   if (!allowLogin) {
     return (
       <ErrorMessage contentTitle="403" content="Login não está permitido no momento" />
