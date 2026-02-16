@@ -63,10 +63,9 @@ X-Forwarded-Proto $scheme; }
 
 location /public/ { alias /home/erick/theblog/public/; }
 
-  <!-- # Pasta de uploads – acessível diretamente. IMPORTANTE: qualquer rota "/uploads" do Next será ignorada
-  location /uploads/ {
-    alias /home/erick/theblog/public/uploads/;
-  } -->
+# Pasta de uploads – acessível diretamente. IMPORTANTE: qualquer rota "/uploads" do Next será ignorada
+
+location /uploads/ { alias /home/erick/theblog/public/uploads/; }
 
 # Todas as outras rotas passam para o servidor Next.js (SSR)
 

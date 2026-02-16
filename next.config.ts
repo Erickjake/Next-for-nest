@@ -11,6 +11,13 @@ const nextConfig: NextConfig = {
         pathname: '/**',
         search: '', // Matches the path structure
       },
+      {
+        protocol: 'http',
+        hostname: 'blog.ericksoncosta.com.br',
+        port: '', // Matches the port in your error URL
+        pathname: '/**',
+        search: '', // Matches the path structure
+      },
     ],
   },
 };
