@@ -344,8 +344,8 @@ Cola isso no arquivo ajustando os caminhos para seu servidor
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-echo "cd /home/luizotavio/theblog"
-cd /home/luizotavio/theblog
+echo "cd /home/erick/theblog"
+cd /home/erick/theblog
 echo
 
 echo "Executando: git pull origin main"
