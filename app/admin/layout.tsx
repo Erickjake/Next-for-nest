@@ -1,17 +1,18 @@
 import { MenuAdmin } from "@/src/components/admin/MenuAdmin";
 import SpinLoader from "@/src/components/SpinLoader";
-import { requireLoginSession } from "@/src/lib/login/manage-login";
+import { requireLoginSessionForApiOrRedirect } from "@/src/lib/login/manage-login";
 import { Suspense } from "react";
 
 type AdminPostLayoutProps = Readonly<{
   children: React.ReactNode;
 }>;
 
+
 // 1. Criamos um componente interno ASYNC.
 // É ele que vai "segurar" o carregamento.
 async function AdminContent({ children }: { children: React.ReactNode }) {
   // A verificação acontece aqui, DENTRO do limite do Suspense
-  await requireLoginSession();
+  await requireLoginSessionForApiOrRedirect();
 
   return (
     <>

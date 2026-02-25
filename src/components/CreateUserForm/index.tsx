@@ -70,7 +70,6 @@ export function CreateUserForm() {
           <UserRoundIcon />
           {!isPending && 'Criar conta'}
           {isPending && 'Criando conta...'}
-          Criar conta
         </Button>
 
         <p className='text-sm/tight'>

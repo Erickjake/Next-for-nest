@@ -70,7 +70,10 @@ export function MenuAdmin() {
         {isPending ? (
           <HourglassIcon />
         ) : (
-          <LogOutIcon />
+          <>
+            <LogOutIcon />
+            Sair
+          </>
         )}
       </a>
     </nav>

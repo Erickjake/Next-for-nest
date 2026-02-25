@@ -1,6 +1,8 @@
-import { LoginForm } from "@/src/components/admin/LoginForm";
+import { LoginForm } from "@/src/components/LoginForm";
 import ErrorMessage from "@/src/components/ErrorMessage";
 import { Metadata } from "next";
+import { Suspense } from "react";
+import SpinLoader from "@/src/components/SpinLoader";
 
 export const metadata: Metadata = {
   title: 'Login',
@@ -17,6 +19,8 @@ export default async function AdminLoginPage() {
   }
 
   return (
-    <LoginForm />
+    <Suspense fallback={<SpinLoader />}>
+      <LoginForm />
+    </Suspense>
   );
 }

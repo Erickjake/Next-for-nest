@@ -5,7 +5,7 @@ import { verifyLoginSession } from '@/src/lib/login/manage-login';
 import { PostCreateSchema } from '@/src/lib/post/validation';
 import { PostModel } from '@/src/models/post/post-model';
 import { postRepository } from '@/src/repositories/post';
-import { getZodErrorMessage } from '@/src/utils/get-Zod-Error-message';
+import { getZodErrorMessages } from '@/src/utils/get-Zod-Error-message';
 import { makeSlugFromText } from '@/src/utils/make-slug-from-text';
 import { updateTag } from 'next/cache'; // <--- CORREÇÃO 1
 import { redirect } from 'next/navigation';
@@ -42,7 +42,7 @@ export async function createPostAction(
 
   // 2. Validação do Schema Zod
   if (!zodParseObj.success) {
-    const errors = getZodErrorMessage(zodParseObj.error.format());
+    const errors = getZodErrorMessages(zodParseObj.error.format());
     return {
       formState: makePartialPublicPost(formDataObject),
       errors: errors,

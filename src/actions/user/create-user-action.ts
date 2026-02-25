@@ -4,7 +4,9 @@ import {
   PublicUserDto,
   PublicUserSchema,
 } from '@/src/lib/user/schemas';
-import { getZodErrorMessage } from '@/src/utils/get-Zod-Error-message';
+import { apiRequest } from '@/src/utils/api-request';
+import { getZodErrorMessages } from '@/src/utils/get-Zod-Error-message';
+import { redirect } from 'next/navigation';
 
 type CreateUserActionState = {
   user: PublicUserDto;
@@ -28,42 +30,24 @@ export async function createUserAction(
   if (!parsedFormData.success) {
     return {
       user: PublicUserSchema.parse(formObj),
-      errors: getZodErrorMessage(parsedFormData.error.format()),
+      errors: getZodErrorMessages(parsedFormData.error.format()),
       success: false,
     };
   }
 
-  const apiUrl = process.env.API_URL || 'http://localhost:3001';
-  try {
-    const response = await fetch(`${apiUrl}/user`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(parsedFormData.data),
-    });
-    if (!response.ok) {
-      const errorData = await response.json();
-      return {
-        user: PublicUserSchema.parse(formObj),
-        errors: errorData.message || ['Failed to create user.'],
-        success: false,
-      };
-    }
-    const userData = await response.json();
-    return {
-      user: PublicUserSchema.parse(userData),
-      errors: userData.message || [],
-      success: true,
-    };
-  } catch (error) {
+  const createUserResponse = await apiRequest<PublicUserDto>('/user', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(parsedFormData.data),
+  });
+
+  if (!createUserResponse.success) {
     return {
       user: PublicUserSchema.parse(formObj),
-      errors:
-        error instanceof Error
-          ? error.message.split(',')
-          : ['An error occurred.'],
-      success: false,
+      errors: createUserResponse.errors,
+      success: createUserResponse.success,
     };
   }
+
+  redirect('/login?created=1');
 }
