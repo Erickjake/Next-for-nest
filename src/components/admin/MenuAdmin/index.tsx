@@ -2,7 +2,7 @@
 
 import { logoutAction } from "@/src/actions/login/logout-action";
 import { cn } from "@/src/lib/utils";
-import { CircleXIcon, FileTextIcon, HourglassIcon, HouseIcon, LogOutIcon, MenuIcon, PlusIcon } from "lucide-react";
+import { CircleXIcon, FileTextIcon, HourglassIcon, HouseIcon, LogOutIcon, MenuIcon, PlusIcon, UserPenIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTransition, useEffect, useState } from "react";
@@ -62,6 +62,9 @@ export function MenuAdmin() {
       </a>
       <Link className={linkClasses} href="/admin/post">
         <FileTextIcon className="inline-block mr-2" />Posts
+      </Link>
+      <Link className={linkClasses} href="/admin/user">
+        <UserPenIcon className="inline-block mr-2" />Seus Dados
       </Link>
       <Link className={linkClasses} href="/admin/post/new">
         <PlusIcon className="inline-block mr-2" />Criar Posts

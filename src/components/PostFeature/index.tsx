@@ -1,23 +1,29 @@
 import ErrorMessage from "../ErrorMessage";
 import PostCoverImage from "../PostCoverImage";
 import { PostSummary } from "../PostSummary";
-import { findAllPublicPostsCached } from "@/src/lib/post/queries/public";
+import { findAllPublicPostsFromApiCached } from "@/src/lib/post/queries/public";
 
-export async function PostFeature() {
-  // PONTO DE ATENÇÃO: O ideal seria ter uma função findLatestPost()
-  // que usa "LIMIT 1" no banco de dados para não trafegar dados desnecessários.
-  const posts = await findAllPublicPostsCached();
-  if (posts.length <= 1) return <ErrorMessage contentTitle="OPSSS!😅" content="Desculpe, não há posts em destaque no momento. Por favor, volte mais tarde." />
-  const post = posts[0];
+export async function PostFeatured() {
+  const postsRes = await findAllPublicPostsFromApiCached();
+  const noPostsFound = (
+    <ErrorMessage
+      contentTitle='Ops 😅'
+      content='Ainda não criamos nenhum post.'
+    />
+  );
 
-  // 1. Guard Clause: Se não houver posts, não renderiza nada (ou renderiza um placeholder)
-  // Isso evita o crash da aplicação.
-  if (!post) {
-    return null;
-    // Ou: return <p className="text-center py-10">Nenhum post em destaque no momento.</p>;
+  if (!postsRes.success) {
+    return noPostsFound;
   }
 
-  const postLink = `/posts/${post.slug}`;
+  const posts = postsRes.data;
+
+  if (posts.length <= 0) {
+    return noPostsFound;
+  }
+
+  const post = posts[0];
+  const postLink = `/post/${post.slug}`;
 
   return (
     <section className="grid grid-cols-1 gap-8 mb-16 sm:grid-cols-2 group">

@@ -4,13 +4,13 @@ import { loginAction } from "@/src/actions/login/login-action";
 import { Button } from "@/src/components/Button";
 import InputText from "@/src/components/InputText";
 import { cn } from "@/src/lib/utils";
-import { create } from "domain";
 import { LogInIcon } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { use, useActionState, useEffect } from "react";
+import { useActionState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { HoneypotInput } from "../HoneypotInput";
 
 export function LoginForm() {
   const initialState = {
@@ -54,6 +54,7 @@ export function LoginForm() {
       <form action={action} className="flex-1 flex flex-col gap-6">
         <InputText type="text" name="email" labelText="E-mail" disabled={isPending} defaultValue={state.email} placeholder="Digite seu e-mail" required />
         <InputText type="password" name="password" labelText="Senha" disabled={isPending} placeholder="Digite sua senha" required />
+        <HoneypotInput />
         <Button disabled={isPending} type="submit" className="mt-4" variant={"default"} size={"md"}><LogInIcon className="w-4 h-4" /> Entrar</Button>
         <Link href="/user/new">Criar conta</Link>
       </form>

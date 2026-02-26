@@ -1,58 +1,57 @@
 'use server';
 
-import { verifyLoginSession } from '@/src/lib/login/manage-login';
-import { mkdir, writeFile } from 'fs/promises';
-import { extname, resolve } from 'path';
+import { getLoginSessionForApi } from '@/src/lib/login/manage-login';
+import { authenticatedApiRequest } from '@/src/utils/authenticated-api-request';
 
-type UploadImageAction = {
+type UploadImageActionResult = {
   url: string;
   error: string;
 };
 
-const uploadDiretory = process.env.IMAGE_UPLOAD_DIRECTORY;
-const serverUrl = process.env.IMAGE_SERVER_URL;
-
 export async function uploadImageAction(
   formData: FormData,
-): Promise<UploadImageAction> {
+): Promise<UploadImageActionResult> {
   const makeResult = ({ url = '', error = '' }) => ({ url, error });
+
+  const isAuthenticated = await getLoginSessionForApi();
+
+  if (!isAuthenticated) {
+    return makeResult({ error: 'Faça login novamente' });
+  }
+
   if (!(formData instanceof FormData)) {
     return makeResult({ error: 'Dados inválidos' });
   }
 
-  const isAuth = await verifyLoginSession();
-  if (!isAuth) {
-    return makeResult({ error: 'Faça login para fazer upload de uma imagem' });
-  }
-
   const file = formData.get('file');
+
   if (!(file instanceof File)) {
-    return makeResult({ error: 'Nenhum arquivo foi enviado' });
+    return makeResult({ error: 'Arquivo inválido' });
   }
 
-  if (file.size > 1024 * 1024)
+  const uploadMaxSize =
+    Number(process.env.NEXT_PUBLIC_IMAGE_UPLOAD_MAX_SIZE) || 921600;
+  if (file.size > uploadMaxSize) {
     return makeResult({ error: 'Arquivo muito grande' });
+  }
 
-  if (!file.type.startsWith('image/'))
-    return makeResult({ error: 'Arquivo inválido' });
+  if (!file.type.startsWith('image/')) {
+    return makeResult({ error: 'Imagem inválida' });
+  }
 
-  const imageExtension = extname(file.name);
-  const imageName = `${Date.now()}${imageExtension}`;
-
-  const uploadPath = resolve(
-    process.cwd(),
-    'public',
-    uploadDiretory || 'uploads',
+  const uploadResponse = await authenticatedApiRequest<{ url: string }>(
+    `/upload`,
+    {
+      method: 'POST',
+      body: formData,
+    },
   );
-  await mkdir(uploadPath, { recursive: true });
 
-  const fileArrayBuffer = await file.arrayBuffer();
-  const fileBuffer = Buffer.from(fileArrayBuffer);
+  if (!uploadResponse.success) {
+    return makeResult({ error: uploadResponse.errors[0] });
+  }
 
-  const filePath = resolve(uploadPath, imageName);
-  await writeFile(filePath, fileBuffer);
-
-  const url = `${serverUrl}/${imageName}`;
+  const url = `${process.env.IMAGE_SERVER_URL}${uploadResponse.data.url}`;
 
   return makeResult({ url });
 }

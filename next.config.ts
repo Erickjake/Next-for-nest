@@ -1,24 +1,32 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  cacheComponents: true,
+  // Nota: cacheComponents não é uma opção padrão do NextConfig.
+  // Se estiver usando uma versão experimental específica, pode manter.
+
   images: {
     remotePatterns: [
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '3000', // Matches the port in your error URL
+        port: '3000',
         pathname: '/**',
-        search: '', // Matches the path structure
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3001',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'blog.ericksoncosta.com.br',
-        port: '', // Matches the port in your error URL
         pathname: '/**',
-        search: '', // Matches the path structure
       },
     ],
+    // Resolve o problema de "resolved to private ip" no Docker/Dev
+    unoptimized: process.env.NODE_ENV === 'development',
   },
 };
+
 export default nextConfig;

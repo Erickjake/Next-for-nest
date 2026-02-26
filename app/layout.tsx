@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Container } from "@/src/components/Container";
-import Header from "@/src/components/Header";
 import Footer from "@/src/components/Footer";
 import { ToastifyContainer } from "@/src/components/ToastifyContainer";
+import { Header } from "@/src/components/Header";
 
 
 
