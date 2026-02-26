@@ -4,10 +4,9 @@ import { redirect } from 'next/navigation';
 
 const jwtSecretKey = process.env.JWT_SECRET_KEY;
 const jwtEncodedKey = new TextEncoder().encode(jwtSecretKey);
-export const dynamic = 'force-dynamic';
 
 const loginExpSeconds = Number(process.env.LOGIN_EXPIRATION_SECONDS) || 86400;
-const loginExpStr = process.env.LOGIN_EXPIRATION_STRING || '1d';
+const loginExpStr = process.env.LOGIN_EXPIRATION_SECONDS || 86400;
 const loginCookieName = process.env.LOGIN_COOKIE_NAME || 'loginSession';
 
 type JwtPayload = {

@@ -1,24 +1,27 @@
 import 'server-only';
-import { redirect } from 'next/navigation';
+import { ApiRequest, apiRequest } from './api-request';
 import { getLoginSessionForApi } from '../lib/login/manage-login';
-import { apiRequest } from './api-request';
 
 export async function authenticatedApiRequest<T>(
-  url: string,
+  path: string,
   options?: RequestInit,
-) {
+): Promise<ApiRequest<T>> {
   const jwtToken = await getLoginSessionForApi();
 
   if (!jwtToken) {
-    redirect('/login');
+    return {
+      success: false,
+      errors: ['Usuário não autenticado'],
+      status: 401,
+    };
   }
 
   const headers = {
-    Authorization: `Bearer ${jwtToken}`,
     ...options?.headers,
+    Authorization: `Bearer ${jwtToken}`,
   };
 
-  return apiRequest<T>(url, {
+  return apiRequest<T>(path, {
     ...options,
     headers,
   });

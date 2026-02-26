@@ -7,7 +7,7 @@ export async function proxy(req: NextRequest) {
   const isAdminPage = req.nextUrl.pathname.startsWith('/admin');
   const isGetRequest = req.method === 'GET';
   const shouldBeAuthenticated = isAdminPage && !isLoginPage;
-  const shouldRedirect = shouldBeAuthenticated && !isGetRequest;
+  const shouldRedirect = shouldBeAuthenticated && isGetRequest;
 
   if (!shouldRedirect) {
     return NextResponse.next();

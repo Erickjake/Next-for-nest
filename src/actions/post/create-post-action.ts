@@ -1,79 +1,75 @@
 'use server';
 
-import { makePartialPublicPost, PublicPost } from '@/src/dto/post/dto';
-import { verifyLoginSession } from '@/src/lib/login/manage-login';
-import { PostCreateSchema } from '@/src/lib/post/validation';
-import { PostModel } from '@/src/models/post/post-model';
-import { postRepository } from '@/src/repositories/post';
+import { getLoginSessionForApi } from '@/src/lib/login/manage-login';
+import {
+  CreatePostForApiSchema,
+  PublicPostForApiDto,
+  PublicPostForApiSchema,
+} from '@/src/lib/post/schemas';
+import { authenticatedApiRequest } from '@/src/utils/authenticated-api-request';
 import { getZodErrorMessages } from '@/src/utils/get-Zod-Error-message';
-import { makeSlugFromText } from '@/src/utils/make-slug-from-text';
-import { updateTag } from 'next/cache'; // <--- CORREÇÃO 1
+import { updateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { v4 as uuidv4 } from 'uuid';
 
-type createPostActionState = {
-  formState: PublicPost;
+type CreatePostActionState = {
+  formState: PublicPostForApiDto;
   errors: string[];
   success?: string;
 };
 
 export async function createPostAction(
-  prevState: createPostActionState,
+  prevState: CreatePostActionState,
   formData: FormData,
-): Promise<createPostActionState> {
-  const isAuth = await verifyLoginSession();
-  // 1. Validação de FormData
+): Promise<CreatePostActionState> {
+  const isAuthenticated = await getLoginSessionForApi();
+
   if (!(formData instanceof FormData)) {
     return {
       formState: prevState.formState,
-      errors: ['FormData inválido'],
+      errors: ['Dados inválidos'],
     };
   }
 
-  const formDataObject = Object.fromEntries(formData.entries());
-  const zodParseObj = PostCreateSchema.safeParse(formDataObject);
+  const formDataToObj = Object.fromEntries(formData.entries());
+  const zodParsedObj = CreatePostForApiSchema.safeParse(formDataToObj);
 
-  if (!isAuth) {
+  if (!isAuthenticated) {
     return {
-      formState: makePartialPublicPost(formDataObject),
-      errors: ['Faça login para criar um post'],
+      formState: PublicPostForApiSchema.parse(formDataToObj),
+      errors: ['Faça login em outra aba antes de salvar.'],
     };
   }
 
-  // 2. Validação do Schema Zod
-  if (!zodParseObj.success) {
-    const errors = getZodErrorMessages(zodParseObj.error.format());
+  if (!zodParsedObj.success) {
+    const errors = getZodErrorMessages(zodParsedObj.error.format());
     return {
-      formState: makePartialPublicPost(formDataObject),
-      errors: errors,
+      errors,
+      formState: PublicPostForApiSchema.parse(formDataToObj),
     };
   }
 
-  const validPostData = zodParseObj.data;
+  const newPost = zodParsedObj.data;
 
-  // 3. Preparação do Modelo
-  const newPost: PostModel = {
-    ...validPostData,
-    id: uuidv4(),
-    slug: makeSlugFromText(validPostData.title),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
+  const createPostResponse = await authenticatedApiRequest<PublicPostForApiDto>(
+    `/post/me`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newPost),
+    },
+  );
 
-  try {
-    await postRepository.create(newPost);
-  } catch (e: unknown) {
-    if (e instanceof Error) {
-      return {
-        formState: newPost,
-        errors: [e.message],
-      };
-    }
+  if (!createPostResponse.success) {
     return {
-      formState: newPost,
-      errors: ['Erro desconhecido'],
+      formState: PublicPostForApiSchema.parse(formDataToObj),
+      errors: createPostResponse.errors,
     };
   }
+
+  const createdPost = createPostResponse.data;
+
   updateTag('posts');
-  redirect(`/admin/post/${newPost.id}?create=1`);
+  redirect(`/admin/post/${createdPost.id}?created=1`);
 }

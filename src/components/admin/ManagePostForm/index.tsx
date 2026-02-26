@@ -6,15 +6,15 @@ import InputCheckBox from "../../InputCheckBox";
 import InputText from "../../InputText";
 import { MarkDownEditor } from "../../MarkDonwEditor";
 import { ImageUploader } from "../ImageUploader";
-import { makePartialPublicPost, PublicPost } from "@/src/dto/post/dto";
 import { createPostAction } from "@/src/actions/post/create-post-action";
 import { toast } from "react-toastify";
 import { updatePostAction } from "@/src/actions/post/update-post-action";
 import { useRouter, useSearchParams } from "next/navigation";
+import { PublicPostForApiDto, PublicPostForApiSchema } from "@/src/lib/post/schemas";
 
 type ManagePostFormUpdateProps = {
   mode: "update";
-  publicPost?: PublicPost;
+  publicPost?: PublicPostForApiDto;
 }
 type ManagePostFormCreateProps = {
   mode: "create";
@@ -38,7 +38,7 @@ export function ManagePostForm(props: ManagePostFormProps) {
     create: createPostAction,
   }
   const initialState = {
-    formState: makePartialPublicPost(publicPost),
+    formState: PublicPostForApiSchema.parse(publicPost || {}),
     errors: [],
   }
   const [state, action, isPending] = useActionState(actionsMap[mode], initialState)
@@ -78,12 +78,11 @@ export function ManagePostForm(props: ManagePostFormProps) {
         <InputText disabled={isPending} labelText="id" name="id" type="text" readOnly defaultValue={formState.id || ''} placeholder="Gerado Automatico" />
         <InputText disabled={isPending} labelText="Slug" name="slug" type="text" readOnly defaultValue={formState.slug || ''} placeholder="Gerado Automatico" />
         <InputText disabled={isPending} labelText="Title" name="title" type="text" defaultValue={formState.title || ''} placeholder="Título do Post" />
-        <InputText disabled={isPending} labelText="Autor" name="author" type="text" defaultValue={formState.author || ''} placeholder="Nome do Autor" />
         <InputText disabled={isPending} labelText="Excerto" name="excerpt" type="text" defaultValue={formState.excerpt || ''} placeholder="Digite o Resumo" />
         <MarkDownEditor disabled={isPending} labelText="Conteúdo" value={content} setValue={setContent} textAreaName="content" />
         <ImageUploader disabled={isPending} />
         <InputText disabled={isPending} labelText="URL de imagem de capa" name="coverImageUrl" type="text" defaultValue={formState.coverImageUrl || ''} placeholder="Digite a URL da Imagem de Capa" />
-        <InputCheckBox disabled={isPending} labelText="Publicar" type="checkbox" name="published" defaultChecked={formState.published || false} />
+        {mode === 'create' && <InputCheckBox disabled={isPending} labelText="Publicar agora?" name="published" defaultChecked={formState.published || false} />}
         <Button disabled={isPending} variant="default" size={"md"} type="submit">Create Post</Button>
       </div>
     </form>

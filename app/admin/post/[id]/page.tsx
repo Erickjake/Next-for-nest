@@ -1,26 +1,38 @@
-import { Metadata } from "next";
-import { ManagePostForm } from "@/src/components/admin/ManagePostForm";
-import { findPostByIdAdmin } from "@/src/lib/post/queries/admin";
-import { notFound } from "next/navigation";
-import { makePublicPostFromDb } from "@/src/dto/post/dto";
+import { ManagePostForm } from '@/src/components/admin/ManagePostForm';
+import { findPostByIdFromApiAdmin } from '@/src/lib/post/queries/admin';
+import { PublicPostForApiSchema } from '@/src/lib/post/schemas';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
-
-type AdminPostIdPageProps = {
-  params: Promise<{ id: string }>;
-};
 
 export const metadata: Metadata = {
-  title: "Editar Post",
-}
-export default async function AdminPostIdPage({ params }: AdminPostIdPageProps) {
-  const { id } = await params
-  const post = await findPostByIdAdmin(id).catch(() => undefined);
-  if (!post) notFound();
-  const publicPost = makePublicPostFromDb(post);
+  title: 'Editar post',
+};
+
+type AdminPostIdPageProps = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export default async function AdminPostIdPage({
+  params,
+}: AdminPostIdPageProps) {
+  const { id } = await params;
+  const postRes = await findPostByIdFromApiAdmin(id);
+
+  if (!postRes.success) {
+    console.log(postRes.errors);
+    notFound();
+  }
+
+  const post = postRes.data;
+  const publicPost = PublicPostForApiSchema.parse(post);
+
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-extrabold">Editar Post</h1>
-      <ManagePostForm mode="update" publicPost={publicPost} />
+    <div className='flex flex-col gap-6'>
+      <h1 className='text-xl font-extrabold'>Editar post</h1>
+      <ManagePostForm mode='update' publicPost={publicPost} />
     </div>
   );
 }

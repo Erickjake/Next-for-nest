@@ -21,6 +21,15 @@ export async function loginAction(state: LoginActionState, formData: FormData) {
     };
   }
 
+  // const isBot = await verifyHoneypotInput(formData, 5000);
+
+  // if (isBot) {
+  //   return {
+  //     email: '',
+  //     errors: ['nice'],
+  //   };
+  // }
+
   if (!(formData instanceof FormData)) {
     return {
       email: '',

@@ -1,5 +1,3 @@
-import 'server-only';
-
 type ApiRequestError = {
   errors: string[];
   success: false;
@@ -14,43 +12,40 @@ type ApiRequestSuccess<T> = {
 
 export type ApiRequest<T> = ApiRequestError | ApiRequestSuccess<T>;
 
-export const API_URL = process.env.API_URL || 'http://localhost:3001';
+export const apiUrl = process.env.API_URL || 'http://localhost:3001';
 
 export async function apiRequest<T>(
   path: string,
   options?: RequestInit,
 ): Promise<ApiRequest<T>> {
-  const url = `${API_URL}${path}`;
+  const url = `${apiUrl}${path}`;
 
-  console.log('fullUrl', url);
   try {
-    const response = await fetch(url, options);
-    const responseData = await response.json().catch(() => null);
+    const res = await fetch(url, options);
+    const json = await res.json().catch(() => null);
 
-    if (!response.ok) {
-      const errors = Array.isArray(responseData?.message)
-        ? responseData.message
-        : [responseData?.message || 'Erro inesperado.'];
+    if (!res.ok) {
+      const errors = Array.isArray(json?.message)
+        ? json.message
+        : [json?.message || 'Erro inesperado'];
 
       return {
         errors,
         success: false,
-        status: response.status,
+        status: res.status,
       };
     }
 
     return {
-      data: responseData,
       success: true,
-      status: response.status,
+      data: json,
+      status: res.status,
     };
-  } catch (error) {
-    console.error('API Request Error:', error);
+  } catch (err) {
+    console.log(err);
+
     return {
-      errors:
-        error instanceof Error
-          ? error.message.split(',')
-          : ['Erro inesperado Server.'],
+      errors: ['Falha ao conectar-se ao servidor'],
       success: false,
       status: 500,
     };

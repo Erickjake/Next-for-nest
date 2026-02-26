@@ -1,23 +1,54 @@
-import { findAllPostAdmin } from "@/src/lib/post/queries/admin";
-import { cn } from "@/src/lib/utils";
-import Link from "next/link";
-import { connection } from "next/server";
-import ErrorMessage from "../../ErrorMessage";
-import DeletePostButton from "../DeletePostButton";
+import clsx from 'clsx';
+import Link from 'next/link';
+import ErrorMessage from '../../ErrorMessage';
+import { findAllPostFromApiAdmin } from '@/src/lib/post/queries/admin';
+import DeletePostButton from '../DeletePostButton';
 
-export default async function PostListAdminPage() {
-  await connection()
-  const posts = await findAllPostAdmin();
-  if (posts.length <= 0) return <ErrorMessage contentTitle="Ei!😅" content="Bora adicionar um post?" />; // Sem posts adicionais para listar
+export default async function PostsListAdmin() {
+  const postsRes = await findAllPostFromApiAdmin();
+
+  if (!postsRes.success) {
+    console.log(postsRes.errors);
+
+    return (
+      <ErrorMessage
+        contentTitle='Ei 😅'
+        content='Tente fazer login novamente'
+      />
+    );
+  }
+
+  const posts = postsRes.data;
+  if (posts.length <= 0) {
+    return (
+      <ErrorMessage contentTitle='Ei 😅' content='Bora criar algum post??' />
+    );
+  }
+
   return (
-    <div className="mb-16">
-      {posts.map((post) =>
-        <div key={post.id} className={cn('py-2', 'px-2', !post.published && 'opacity-50', 'border-b', 'border-gray-200', 'flex', 'items-center', 'justify-between', 'cursor-pointer', 'hover:opacity-75', 'transition-colors')}>
-          <Link href={`/admin/post/${post.id}`} className="">{post.title || 'Untitled Post'}</Link>
-          {!post.published && <span className="ml-2 text-sm text-purple-500 italic">(Não publicado)</span>}
-          <DeletePostButton id={post.id} title={post.title} />
-        </div>)}
+    <div className='mb-16'>
+      {posts.map(post => {
+        return (
+          <div
+            className={clsx(
+              'py-2 px-2',
+              !post.published && 'bg-slate-300',
+              'flex gap-2 items-center justify-between',
+            )}
+            key={post.id}
+          >
+            <Link href={`/admin/post/${post.id}`}>{post.title}</Link>
 
+            {!post.published && (
+              <span className='text-xs text-slate-600 italic'>
+                (Não publicado)
+              </span>
+            )}
+
+            <DeletePostButton id={post.id} title={post.title} />
+          </div>
+        );
+      })}
     </div>
   );
 }

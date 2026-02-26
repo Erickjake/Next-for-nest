@@ -1,5 +1,4 @@
 import PostContent from "@/src/components/PostContent";
-import { SinglePost } from "@/src/components/SinglePost";
 import SpinLoader from "@/src/components/SpinLoader";
 import { findPublicPostBySlugCached } from "@/src/lib/post/queries/public";
 import { Metadata } from "next";
