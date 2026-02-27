@@ -101,14 +101,16 @@ export async function signJwt(jwtPayload: JwtPayload) {
     .sign(jwtEncodedKey);
 }
 
-export async function verifyJwt(jwt: string | undefined = '') {
+export async function verifyJwt(jwt?: string) {
   try {
+    if (!jwt) return null;
+
     const { payload } = await jwtVerify(jwt, jwtEncodedKey, {
       algorithms: ['HS256'],
     });
+
     return payload;
   } catch {
-    console.log('Invalid Token');
-    return false;
+    return null;
   }
 }

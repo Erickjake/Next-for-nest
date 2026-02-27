@@ -1,30 +1,17 @@
-import {
-  format,
-  formatDistanceToNow as dateFnsFormatDistanceToNow,
-} from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-
-export function formatDatetime(rawDate: string): string {
+export function formatDistanceToNowFrom(rawDate: string, now: number): string {
   const date = new Date(rawDate);
+  const diffMs = now - date.getTime();
 
-  return format(date, "dd/MM/yyyy 'às' HH'h'mm", {
-    locale: ptBR,
-  });
-}
+  const minutes = Math.floor(diffMs / 60000);
 
-export function formatDistanceToNow(rawDate: string): string {
-  const date = new Date(rawDate);
+  if (minutes < 1) return 'agora mesmo';
+  if (minutes < 60) return `há ${minutes} minutos`;
 
-  return dateFnsFormatDistanceToNow(date, {
-    locale: ptBR,
-    addSuffix: true,
-  });
-}
+  const hours = Math.floor(minutes / 60);
 
-export function formatHour(timestampMs: number): string {
-  const date = new Date(timestampMs);
+  if (hours < 24) return `há ${hours} horas`;
 
-  return format(date, 'HH:mm:ss', {
-    locale: ptBR,
-  });
+  const days = Math.floor(hours / 24);
+
+  return `há ${days} dias`;
 }

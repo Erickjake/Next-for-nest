@@ -3,8 +3,11 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   // Nota: cacheComponents não é uma opção padrão do NextConfig.
   // Se estiver usando uma versão experimental específica, pode manter.
-
+  experimental: {
+    cacheComponents: true,
+  },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'http',
@@ -25,7 +28,6 @@ const nextConfig: NextConfig = {
       },
     ],
     // Resolve o problema de "resolved to private ip" no Docker/Dev
-    unoptimized: process.env.NODE_ENV === 'development',
   },
 };
 

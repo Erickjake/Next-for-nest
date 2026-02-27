@@ -10,4 +10,4 @@ export const IMAGE_UPLOAD_ACCEPTED_FILE_TYPES = [
   'image/webp',
 ];
 export const IMAGE_UPLOAD_DIRECTORY = 'uploads';
-export const IMAGE_SERVER_URL = 'http://localhost:3000/uploads';
+export const IMAGE_SERVER_URL = 'http://localhost:3001/uploads';

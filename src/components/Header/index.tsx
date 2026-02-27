@@ -1,9 +1,9 @@
-import { verifyLoginSession } from '@/src/lib/login/manage-login';
+import { verifyJwt, verifyLoginSession } from '@/src/lib/login/manage-login';
 import clsx from 'clsx';
 import Link from 'next/link';
 export async function Header() {
   // Chamamos sua função diretamente no servidor
-  const isLoggedIn = await verifyLoginSession();
+  const isLoggedIn = await verifyJwt();
 
   return (
     <header className="border-b border-gray-100 dark:border-gray-800">
